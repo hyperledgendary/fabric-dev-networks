@@ -1,0 +1,52 @@
+{
+    "name": "basic-network",
+    "version": "1.0.0",
+    "client": {
+        "organization": "HumboldtOrg",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "mychannel": {
+            "orderers": [
+                "orderer.example.com"
+            ],
+            "peers": {
+                "peer0.humboldt.example.com": {}
+            }
+        }
+    },
+    "organizations": {
+        "HumboldtOrg": {
+            "mspid": "HumboldtOrgMSP",
+            "peers": [
+                "peer0.humboldt.example.com"
+            ],
+            "certificateAuthorities": [
+                "ca.example.com"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer.example.com": {
+            "url": "grpc://localhost:7050"
+        }
+    },
+    "peers": {
+        "peer0.humboldt.example.com": {
+            "url": "grpc://localhost:7051"
+        }
+    },
+    "certificateAuthorities": {
+        "ca.example.com": {
+            "url": "http://localhost:7054",
+            "caName": "ca.example.com"
+        }
+    }
+}
