@@ -13,7 +13,7 @@
         }
     },
     "channels": {
-        "mychannel": {
+        "smallchannel": {
             "orderers": [
                 "orderer.example.com"
             ],

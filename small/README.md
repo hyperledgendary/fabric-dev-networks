@@ -31,11 +31,11 @@ docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabr
 ```
 
 ```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "configtxgen -profile OneOrgChannel -outputCreateChannelTx ./configtx/channel.tx -channelID mychannel"
+docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "configtxgen -profile OneOrgChannel -outputCreateChannelTx ./configtx/channel.tx -channelID smallchannel"
 ```
 
 ```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./configtx/HumboldtOrgMSPanchors.tx -channelID mychannel -asOrg HumboldtOrg"
+docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./configtx/HumboldtOrgMSPanchors.tx -channelID smallchannel -asOrg HumboldtOrg"
 ```
 
 Check what ended up in _/etc/hyperledger/fabric_! 
@@ -50,20 +50,34 @@ Start the fans!
 docker-compose -f docker-compose.yml up -d ca.humboldt.example.com orderer.example.com peer0.humboldt.example.com couchdb cli
 ```
 
+Check everything looks ok (see logging below)
+
+```
+docker ps
+```
+
 Create the channel
 
 ```
-docker exec humboldt.cli peer channel create -o orderer.example.com:7050 -c mychannel -f /etc/hyperledger/fabric/configtx/channel.tx --outputBlock /etc/hyperledger/fabric/configtx/channel.block
+docker exec humboldt.cli peer channel create -o orderer.example.com:7050 -c smallchannel -f /etc/hyperledger/fabric/configtx/channel.tx --outputBlock /etc/hyperledger/fabric/configtx/channel.block
 ```
 
-Join peer to the channel.
+Join peer to the channel
 
 ```
 docker exec humboldt.cli peer channel join -b /etc/hyperledger/fabric/configtx/channel.block
 ```
 
 ```
-docker exec humboldt.cli peer channel update -o orderer.example.com:7050 --ordererTLSHostnameOverride orderer.example.com -c mychannel -f /etc/hyperledger/fabric/configtx/HumboldtOrgMSPanchors.tx
+docker exec humboldt.cli peer channel update -o orderer.example.com:7050 --ordererTLSHostnameOverride orderer.example.com -c smallchannel -f /etc/hyperledger/fabric/configtx/HumboldtOrgMSPanchors.tx
+```
+
+```
+docker exec humboldt.cli peer channel list
+```
+
+```
+docker exec humboldt.cli peer channel getinfo -c smallchannel
 ```
 
 ## Chaincode lifecycle
@@ -75,7 +89,7 @@ cd <CHAINCODE_DIR>
 docker run --rm -e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/humboldt.example.com/users/Admin@humboldt.example.com/msp -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric/chaincode --entrypoint=/bin/bash hyperledger/fabric-tools -c "peer lifecycle chaincode package /etc/hyperledger/fabric/chaincode/fabcar.tar.gz --path /local --lang <golang/java/node> --label fabcar_v1"
 ```
 
-TODO: fails for java and node implementations of fabcar!
+**Note:** currently fails for java implementation of fabcar
 
 ```
 docker exec humboldt.cli peer lifecycle chaincode install /etc/hyperledger/fabric/chaincode/fabcar.tar.gz
@@ -86,36 +100,42 @@ docker exec humboldt.cli peer lifecycle chaincode queryinstalled
 ```
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode approveformyorg -o orderer.example.com:7050 --channelID mychannel --name fabcar --version v1 --init-required --package-id <PACKAGE_ID> --sequence 1 --waitForEvent
+docker exec humboldt.cli peer lifecycle chaincode approveformyorg -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --init-required --package-id <PACKAGE_ID> --sequence 1 --waitForEvent
 ```    
 
 TODO: fails with _Error: timed out waiting for txid on all peers_
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode checkcommitreadiness -o orderer.example.com:7050 --channelID mychannel --name fabcar --version v1 --sequence 1 --output json --init-required
+docker exec humboldt.cli peer lifecycle chaincode checkcommitreadiness -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --sequence 1 --output json --init-required
 ```
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode commit -o orderer.example.com:7050 --channelID mychannel --name fabcar --version v1 --sequence 1 --init-required
+docker exec humboldt.cli peer lifecycle chaincode commit -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --sequence 1 --init-required
 ```
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode querycommitted --channelID $CHANNEL_NAME --name fabcar
-```
-
-TBC is there an init?!
-peer chaincode invoke -o localhost:7050 -C $CHANNEL_NAME -n fabcar $PEER_CONN_PARMS --isInit -c '{"function":"init","Args":[]}'
-
-```
-docker exec humboldt.cli peer chaincode invoke -o localhost:7050 -C $CHANNEL_NAME -n fabcar $PEER_CONN_PARMS  -c '{"function":"initLedger","Args":[]}'
+docker exec humboldt.cli peer lifecycle chaincode querycommitted --channelID smallchannel --name fabcar
 ```
 
 ```
-docker exec humboldt.cli peer chaincode query -C $CHANNEL_NAME -n fabcar -c '{"Args":["queryAllCars"]}'
+docker exec humboldt.cli peer chaincode invoke -o orderer.example.com:7050 -C smallchannel -n fabcar --isInit -c '{"function":"initLedger","Args":[]}'
 ```
 
+```
+docker exec humboldt.cli peer chaincode query -C smallchannel -n fabcar -c '{"Args":["queryAllCars"]}'
+```
+
+## Logging
+
+```
+docker-compose -f docker-compose.yml up -d logspout && curl http://127.0.0.1:8000/logs
+```
 
 ## Cleaning up
+
+```
+docker-compose -f docker-compose.yml down --volumes --remove-orphans
+```
 
 ```
 docker rm -f $(docker ps -aq)
