@@ -100,10 +100,8 @@ docker exec humboldt.cli peer lifecycle chaincode queryinstalled
 ```
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode approveformyorg -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --init-required --package-id <PACKAGE_ID> --sequence 1 --waitForEvent
-```    
-
-TODO: fails with _Error: timed out waiting for txid on all peers_
+docker exec humboldt.cli peer lifecycle chaincode approveformyorg -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --init-required --sequence 1 --waitForEvent --package-id <PACKAGE_ID>
+```
 
 ```
 docker exec humboldt.cli peer lifecycle chaincode checkcommitreadiness -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --sequence 1 --output json --init-required
