@@ -19,29 +19,29 @@ Thinking about creating a docker image based on fabric-tools with additional scr
 Generate:
 
 ```
-docker run --rm -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "rm -Rf /etc/hyperledger/fabric/configtx.yaml /etc/hyperledger/fabric/msp && cp /local/crypto-config.yaml /local/configtx.yaml /etc/hyperledger/fabric"
+docker run --rm -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "cp /local/crypto-config.yaml /local/configtx.yaml /etc/hyperledger/fabric"
 ```
 
 ```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "cryptogen generate --config=./crypto-config.yaml"
+docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "cryptogen generate --config=./crypto-config.yaml"
 ```
 
 ```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "configtxgen -profile OneOrgOrdererGenesis -channelID system-channel -outputBlock ./configtx/genesis.block"
+docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "configtxgen -profile OneOrgOrdererGenesis -channelID system-channel -outputBlock ./configtx/genesis.block"
 ```
 
 ```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "configtxgen -profile OneOrgChannel -outputCreateChannelTx ./configtx/channel.tx -channelID smallchannel"
+docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "configtxgen -profile OneOrgChannel -outputCreateChannelTx ./configtx/channel.tx -channelID smallchannel"
 ```
 
 ```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools -c "configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./configtx/HumboldtOrgMSPanchors.tx -channelID smallchannel -asOrg HumboldtOrg"
+docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./configtx/HumboldtOrgMSPanchors.tx -channelID smallchannel -asOrg HumboldtOrg"
 ```
 
 Check what ended up in _/etc/hyperledger/fabric_! 
 
 ```
-docker run --rm -it -v small_config:/etc/hyperledger/fabric --entrypoint=/bin/bash hyperledger/fabric-tools
+docker run --rm -it -v small_config:/etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools
 ```
 
 Start the fans!
@@ -86,7 +86,7 @@ _Is /etc/hyperledger/fabric/chaincode a reasonable place to dump packaged chainc
 
 ```
 cd <CHAINCODE_DIR>
-docker run --rm -e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/humboldt.example.com/users/Admin@humboldt.example.com/msp -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric/chaincode --entrypoint=/bin/bash hyperledger/fabric-tools -c "peer lifecycle chaincode package /etc/hyperledger/fabric/chaincode/fabcar.tar.gz --path /local --lang <golang/java/node> --label fabcar_v1"
+docker run --rm -e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/humboldt.example.com/users/Admin@humboldt.example.com/msp -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric/chaincode --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "peer lifecycle chaincode package /etc/hyperledger/fabric/chaincode/fabcar.tar.gz --path /local --lang <golang/java/node> --label fabcar_v1"
 ```
 
 **Note:** currently fails for java implementation of fabcar

@@ -119,7 +119,7 @@ services:
 
   cli:
     container_name: humboldt.cli
-    image: hyperledger/fabric-tools
+    image: hyperledgendary/fabric-tools
     tty: true
     environment:
       - GOPATH=/opt/gopath
