@@ -13,3 +13,5 @@ ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
 VOLUME /etc/hyperledger/fabric
 COPY --from=tools /usr/local/bin /usr/local/bin
 COPY --from=tools ${FABRIC_CFG_PATH}/core.yaml ${FABRIC_CFG_PATH}/orderer.yaml ${FABRIC_CFG_PATH}/
+
+COPY small /etc/hyperledgendary/fabric-dev-networks/small/
