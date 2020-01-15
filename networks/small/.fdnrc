@@ -1,0 +1,6 @@
+CHANNEL_NAME=smallchannel
+GENESIS_PROFILE=OneOrgOrdererGenesis
+CHANNEL_PROFILE=OneOrgChannel
+
+# TODO: handle multiple orgs
+ORG_NAME=HumboldtOrg

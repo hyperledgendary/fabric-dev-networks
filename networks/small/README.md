@@ -19,23 +19,7 @@ Thinking about creating a docker image based on fabric-tools with additional scr
 Generate:
 
 ```
-docker run --rm -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "cp /local/crypto-config.yaml /local/configtx.yaml /etc/hyperledger/fabric"
-```
-
-```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "cryptogen generate --config=./crypto-config.yaml"
-```
-
-```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "configtxgen -profile OneOrgOrdererGenesis -channelID system-channel -outputBlock ./configtx/genesis.block"
-```
-
-```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "configtxgen -profile OneOrgChannel -outputCreateChannelTx ./configtx/channel.tx -channelID smallchannel"
-```
-
-```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./configtx/HumboldtOrgMSPanchors.tx -channelID smallchannel -asOrg HumboldtOrg"
+docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "generate.sh"
 ```
 
 Check what ended up in _/etc/hyperledger/fabric_! 
@@ -45,6 +29,8 @@ docker run --rm -it -v small_config:/etc/hyperledger/fabric --entrypoint=/bin/ba
 ```
 
 Start the fans!
+
+TODO copy docker compose file out of hyperlegendary image?
 
 ```
 docker-compose -f docker-compose.yml up -d ca.humboldt.example.com orderer.example.com peer0.humboldt.example.com couchdb cli
