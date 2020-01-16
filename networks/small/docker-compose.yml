@@ -134,6 +134,7 @@ services:
     command: /bin/bash
     volumes:
       - /var/run/:/host/var/run/
+      - cli:/var/hyperledgendary/fdn
       - config:/etc/hyperledger/fabric
     networks:
       - fabricdev

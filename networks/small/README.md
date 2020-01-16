@@ -19,7 +19,7 @@ Thinking about creating a docker image based on fabric-tools with additional scr
 Generate:
 
 ```
-docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "generate.sh"
+docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "setnet.sh"
 ```
 
 Check what ended up in _/etc/hyperledger/fabric_! 
@@ -42,21 +42,13 @@ Check everything looks ok (see logging below)
 docker ps
 ```
 
-Create the channel
+Create the network
 
 ```
-docker exec humboldt.cli peer channel create -o orderer.example.com:7050 -c smallchannel -f /etc/hyperledger/fabric/configtx/channel.tx --outputBlock /etc/hyperledger/fabric/configtx/channel.block
+docker exec humboldt.cli mknet.sh
 ```
 
-Join peer to the channel
-
-```
-docker exec humboldt.cli peer channel join -b /etc/hyperledger/fabric/configtx/channel.block
-```
-
-```
-docker exec humboldt.cli peer channel update -o orderer.example.com:7050 --ordererTLSHostnameOverride orderer.example.com -c smallchannel -f /etc/hyperledger/fabric/configtx/HumboldtOrgMSPanchors.tx
-```
+Check what happened!
 
 ```
 docker exec humboldt.cli peer channel list
@@ -68,17 +60,15 @@ docker exec humboldt.cli peer channel getinfo -c smallchannel
 
 ## Chaincode lifecycle
 
-_Is /etc/hyperledger/fabric/chaincode a reasonable place to dump packaged chaincode?_
-
 ```
 cd <CHAINCODE_DIR>
-docker run --rm -e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/humboldt.example.com/users/Admin@humboldt.example.com/msp -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric/chaincode --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "peer lifecycle chaincode package /etc/hyperledger/fabric/chaincode/fabcar.tar.gz --path /local --lang <golang/java/node> --label fabcar_v1"
+docker run --rm -e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/humboldt.example.com/users/Admin@humboldt.example.com/msp -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -v small_cli:/var/hyperledgendary/fdn -w /var/hyperledgendary/fdn --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "peer lifecycle chaincode package ./fabcar.tar.gz --path /local --lang <golang/java/node> --label fabcar_v1"
 ```
 
 **Note:** currently fails for java implementation of fabcar
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode install /etc/hyperledger/fabric/chaincode/fabcar.tar.gz
+docker exec humboldt.cli peer lifecycle chaincode install /var/hyperledgendary/fdn/fabcar.tar.gz
 ```
 
 ```

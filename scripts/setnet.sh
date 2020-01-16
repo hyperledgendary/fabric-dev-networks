@@ -11,8 +11,12 @@ function error_exit()
 	exit 1
 }
 
+if [ -f "/etc/hyperledger/fabric/.fdnrc" ]; then
+  error_exit "Network has already been selected"
+fi
+
 if [ $# -lt 1 ]; then
-  NETWORK_DIR=/etc/hyperledgendary/fabric-dev-networks/small
+  NETWORK_DIR=/etc/hyperledgendary/fdn/small
 else
   NETWORK_DIR=$1
   shift
@@ -20,13 +24,16 @@ fi
 
 if [ -d "${NETWORK_DIR}" ] && [ -f "${NETWORK_DIR}/.fdnrc" ] && [ -f "${NETWORK_DIR}/configtx.yaml" ] && [ -f "${NETWORK_DIR}/crypto-config.yaml" ]; then
   echo "Network config found: ${NETWORK_DIR}"
-  source "${NETWORK_DIR}/.fdnrc"
-  cp /etc/hyperledgendary/fabric-dev-networks/small/{crypto-config.yaml,configtx.yaml} /etc/hyperledger/fabric
+  cp /etc/hyperledgendary/fdn/small/{.fdnrc,crypto-config.yaml,configtx.yaml} /etc/hyperledger/fabric
+
+  # TODO: copy docker-compose.yml to /local if it exists?
 else
   echo "Network config not found: ${NETWORK_DIR}" 1>&2 && exit 1
 fi
 
 pushd /etc/hyperledger/fabric
+
+source ./.fdnrc
 
 # generate crypto material
 cryptogen generate --config=./crypto-config.yaml || error_exit "Failed to generate crypto material"
