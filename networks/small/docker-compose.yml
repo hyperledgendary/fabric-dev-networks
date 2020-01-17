@@ -5,7 +5,6 @@ version: '2.1'
 
 volumes:
   orderer.example.com:
-  ca.humboldt.example.com:
   peer0.humboldt.example.com:
   couchdb:
   cli:
@@ -84,23 +83,6 @@ services:
     depends_on:
       - orderer.example.com
       - couchdb
-    networks:
-      - fabricdev
-
-  ca.humboldt.example.com:
-    container_name: ca.humboldt.example.com
-    image: hyperledger/fabric-ca
-    environment:
-      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca.humboldt.example.com
-      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/peer0.humboldt.example.com/ca/ca.humboldt.example.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/peer0.humboldt.example.com/ca/priv_sk
-    ports:
-      - "7054:7054"
-    command: sh -c 'fabric-ca-server start -b admin:adminpw'
-    volumes:
-      - config:/etc/hyperledger/fabric
-      - ca.humboldt.example.com:/etc/hyperledger/fabric-ca-server
     networks:
       - fabricdev
 

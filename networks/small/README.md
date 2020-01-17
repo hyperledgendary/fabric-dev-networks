@@ -28,18 +28,14 @@ Check what ended up in _/etc/hyperledger/fabric_!
 docker run --rm -it -v small_config:/etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools
 ```
 
-Start the fans!
-
 TODO copy docker compose file out of hyperlegendary image?
 
-```
-docker-compose -f docker-compose.yml up -d ca.humboldt.example.com orderer.example.com peer0.humboldt.example.com couchdb cli
-```
+Start logging! (See below)
 
-Check everything looks ok (see logging below)
+Start the fans!
 
 ```
-docker ps
+docker-compose -f docker-compose.yml up -d orderer.example.com peer0.humboldt.example.com couchdb cli
 ```
 
 Create the network
@@ -52,9 +48,6 @@ Check what happened!
 
 ```
 docker exec humboldt.cli peer channel list
-```
-
-```
 docker exec humboldt.cli peer channel getinfo -c smallchannel
 ```
 
@@ -102,7 +95,8 @@ docker exec humboldt.cli peer chaincode query -C smallchannel -n fabcar -c '{"Ar
 ## Logging
 
 ```
-docker-compose -f docker-compose.yml up -d logspout && curl http://127.0.0.1:8000/logs
+docker-compose -f docker-compose.yml up -d logspout
+curl http://127.0.0.1:8000/logs
 ```
 
 ## Cleaning up
