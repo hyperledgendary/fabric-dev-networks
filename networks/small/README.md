@@ -6,10 +6,16 @@ _Based on the fabric-samples basic-network_
 
 ## Prereqs
 
-Download the Hyperledger Fabric docker images.
+Download the Hyperledger Fabric docker images
 
 ```
 curl -sSL https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bootstrap.sh | bash -s -- 2.0.0-beta 1.4.4 0.4.18 -s -b
+```
+
+Build the custom tools image
+
+```
+docker build -t hyperledgendary/fabric-tools .
 ```
 
 ## Usage
@@ -17,6 +23,8 @@ curl -sSL https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bo
 Thinking about creating a docker image based on fabric-tools with additional scripts to automate these steps, but for now run the following to set up a small network.
 
 Generate:
+
+TODO include suitable core.yaml and orderer.yaml with network config instead of overriding settings with env vars?
 
 ```
 docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "setnet.sh"
@@ -69,15 +77,15 @@ docker exec humboldt.cli peer lifecycle chaincode queryinstalled
 ```
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode approveformyorg -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --init-required --sequence 1 --waitForEvent --package-id <PACKAGE_ID>
+docker exec humboldt.cli peer lifecycle chaincode approveformyorg -o orderer.example.com:7050 --ordererTLSHostnameOverride orderer.example.com --tls true --cafile /etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --channelID smallchannel --name fabcar --version 1 --init-required --sequence 1 --waitForEvent --package-id <PACKAGE_ID>
 ```
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode checkcommitreadiness -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --sequence 1 --output json --init-required
+docker exec humboldt.cli peer lifecycle chaincode checkcommitreadiness -o orderer.example.com:7050 --tls true --cafile /etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --channelID smallchannel --name fabcar --version 1 --sequence 1 --output json --init-required
 ```
 
 ```
-docker exec humboldt.cli peer lifecycle chaincode commit -o orderer.example.com:7050 --channelID smallchannel --name fabcar --version 1 --sequence 1 --init-required
+docker exec humboldt.cli peer lifecycle chaincode commit -o orderer.example.com:7050 --tls true --cafile /etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --channelID smallchannel --name fabcar --version 1 --sequence 1 --init-required
 ```
 
 ```
@@ -85,7 +93,7 @@ docker exec humboldt.cli peer lifecycle chaincode querycommitted --channelID sma
 ```
 
 ```
-docker exec humboldt.cli peer chaincode invoke -o orderer.example.com:7050 -C smallchannel -n fabcar --isInit -c '{"function":"initLedger","Args":[]}'
+docker exec humboldt.cli peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile /etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C smallchannel -n fabcar --isInit -c '{"function":"initLedger","Args":[]}'
 ```
 
 ```
