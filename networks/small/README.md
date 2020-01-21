@@ -33,6 +33,14 @@ docker run --rm -v small_config:/etc/hyperledger/fabric -w /etc/hyperledger/fabr
 Check what ended up in _/etc/hyperledger/fabric_! 
 
 ```
+docker run --rm -it -v small_config:/etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "ls -al /etc/hyperledger/fabric"
+```
+
+```
+docker run --rm -it -v small_config:/etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "configtxlator proto_decode --type common.Block --input /etc/hyperledger/fabric/configtx/genesis.block | jq ."
+```
+
+```
 docker run --rm -it -v small_config:/etc/hyperledger/fabric --entrypoint=/bin/bash hyperledgendary/fabric-tools
 ```
 
