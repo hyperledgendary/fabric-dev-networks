@@ -4,20 +4,6 @@ A basic single organisation network for when you need something small and simple
 
 _Based on the fabric-samples basic-network_
 
-## Prereqs
-
-Download the Hyperledger Fabric docker images
-
-```
-curl -sSL https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bootstrap.sh | bash -s -- 2.0.0-beta 1.4.4 0.4.18 -s -b
-```
-
-Build the custom tools image
-
-```
-docker build -t hyperledgendary/fabric-tools .
-```
-
 ## Usage
 
 Thinking about creating a docker image based on fabric-tools with additional scripts to automate these steps, but for now run the following to set up a small network.
@@ -51,7 +37,7 @@ Start logging! (See below)
 Start the fans!
 
 ```
-docker-compose -f docker-compose.yml up -d orderer.example.com peer0.humboldt.example.com couchdb cli
+docker-compose -f docker-compose.yaml up -d orderer.example.com peer0.humboldt.example.com couchdb cli
 ```
 
 Create the network
@@ -111,14 +97,14 @@ docker exec humboldt.cli peer chaincode query -C smallchannel -n fabcar -c '{"Ar
 ## Logging
 
 ```
-docker-compose -f docker-compose.yml up -d logspout
+docker-compose -f docker-compose.yaml up -d logspout
 curl http://127.0.0.1:8000/logs
 ```
 
 ## Cleaning up
 
 ```
-docker-compose -f docker-compose.yml down --volumes --remove-orphans
+docker-compose -f docker-compose.yaml down --volumes --remove-orphans
 ```
 
 ```
