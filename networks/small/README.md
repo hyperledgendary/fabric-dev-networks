@@ -55,12 +55,12 @@ docker exec humboldt.cli peer channel getinfo -c smallchannel
 
 ## Chaincode lifecycle
 
+**Note:** to use the java implementation of fabcar you need to prebuild it with `./gradlew installDist` and package the jars from the `build/install` directory
+
 ```
 cd <CHAINCODE_DIR>
 docker run --rm -e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/humboldt.example.com/users/Admin@humboldt.example.com/msp -v ${PWD}:/local:ro -v small_config:/etc/hyperledger/fabric -v small_cli:/var/hyperledgendary/fdn -w /var/hyperledgendary/fdn --entrypoint=/bin/bash hyperledgendary/fabric-tools -c "peer lifecycle chaincode package ./fabcar.tar.gz --path /local --lang <golang/java/node> --label fabcar_v1"
 ```
-
-**Note:** currently fails for java implementation of fabcar
 
 ```
 docker exec humboldt.cli peer lifecycle chaincode install /var/hyperledgendary/fdn/fabcar.tar.gz
