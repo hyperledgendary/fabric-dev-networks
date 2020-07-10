@@ -1,5 +1,5 @@
 ARG ALPINE_VERSION=3.10
-ARG HLF_VERSION=2.0.0-beta
+ARG HLF_VERSION=2.2.0
 
 FROM hyperledger/fabric-tools:${HLF_VERSION} as tools
 
